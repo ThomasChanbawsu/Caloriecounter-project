@@ -3,6 +3,8 @@ package caloriecalculator;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -234,9 +236,6 @@ class EnterIngredientBox extends UIBox{
                 Recipe user_Recipe = new Recipe(recipe_name, ingredients);
                 this.dispose();
                 ResultBox results = new ResultBox(user_Recipe);
-            // for (Food food : ingredients) {
-            //     food.content();
-            // }
             }
         }
     }
@@ -247,24 +246,39 @@ class EnterIngredientBox extends UIBox{
 class ResultBox extends UIBox{
     // no cancel button
     // change label of proceed button to return
-    private JPanel result_panel;
+    private JPanel result_panel, list_panel;
     private ArrayList<String> RESULT_LABEL = new ArrayList<String>(Arrays.asList("Protein", "Fat", "Carbs", "Calories"));
-
+    private JTabbedPane tabbedPane = new JTabbedPane();
+    //private JMenuBar menubar = new JMenuBar();
     // change parameter to Recipe object later
     ResultBox(Recipe user_recipe){
         
+        // JMenu calorinfo_menu = new JMenu("Stats");
+        // JMenu ingred_menu = new JMenu("Ingredients");
         title();
         result_panel = new JPanel();
         result_panel.setLayout(new BoxLayout(result_panel, BoxLayout.Y_AXIS));
-        System.out.println(user_recipe.get_name());
         add_recipename(result_panel, user_recipe.get_name());
         add_nutrients(result_panel, user_recipe.get_macros());
         add_weight(result_panel, user_recipe.get_weight());
 
+        list_panel = new JPanel();
+        list_panel.setLayout(new BoxLayout(list_panel, BoxLayout.Y_AXIS));
+        create_list(list_panel, user_recipe.get_ingredients());
+
+
         cancel_button.setText("Close");
         proceed_button.setText("Continue");
-        this.add(result_panel, BorderLayout.CENTER);
+        //this.add(result_panel, BorderLayout.CENTER);
+
+        // adding panels to the tabbedpane
+        tabbedPane.addTab("Stats", result_panel);
+        tabbedPane.addTab("Ingredients", list_panel);
+        this.add(tabbedPane, BorderLayout.CENTER);
         //this.pack();
+        // menubar.add(calorinfo_menu);
+        // menubar.add(ingred_menu);
+        // this.setJMenuBar(menubar);
         this.setVisible(true);
     }
 
@@ -279,7 +293,7 @@ class ResultBox extends UIBox{
     public void add_recipename(JPanel panel, String recipe_name){
         String formatString = String.format("Recipe name: %s", recipe_name);
         JLabel label = new JLabel(formatString);
-        label.setFont(new Font("Serif", Font.PLAIN, 15));
+        label.setFont(new Font("Helvetica", Font.PLAIN, 16));
         result_panel.add(label);
         result_panel.add(Box.createRigidArea(new Dimension(0, 10)));
     }
@@ -294,7 +308,8 @@ class ResultBox extends UIBox{
             formattedString = String.format("%s : %.2f (g)", RESULT_LABEL.get(i), nutrit_results.get(i));
             }
             label.setText(formattedString);
-            label.setFont(new Font("Serif", Font.PLAIN, 15));
+            Font customFont = new Font("Helvetica", Font.PLAIN, 16);
+            label.setFont(customFont);
             panel.add(label);
             panel.add(Box.createRigidArea(new Dimension(0, 10)));
         }    
@@ -302,8 +317,19 @@ class ResultBox extends UIBox{
 
     public void add_weight(JPanel panel, double weight){
         JLabel label = new JLabel(String.format("Weight: %.2f (g)", weight));
-        label.setFont(new Font("Serif", Font.PLAIN, 15));
+        label.setFont(new Font("Helvetica", Font.PLAIN, 16));
         panel.add(label);
+    }
+
+    public void create_list(JPanel panel, ArrayList<Food> ingredients){
+        for (Food item : ingredients) {
+            JLabel label = new JLabel();
+            String formattedString = String.format("- %s (%.2f g)", item.get_name(), item.get_weight());
+            label.setText(formattedString);
+            label.setFont(new Font("Helvetica", Font.PLAIN, 16));
+            panel.add(label);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
     }
 
     @Override
@@ -316,6 +342,9 @@ class ResultBox extends UIBox{
             EnterRecipeBox gui_box = new EnterRecipeBox();
         }
     }
-}
 
-// modify function more after learning more about GUI, JBDC
+    // Add a ChangeListener to the JTabbedPane
+    
+
+    
+}

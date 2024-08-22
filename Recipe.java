@@ -89,7 +89,7 @@ public class Recipe {
         }
     }
 
-    public void get_food(String name){
+    public void get_foodcont(String name){
         Boolean getFood = false;
         for (Food food : ingredients) {
             if (food.get_name().equalsIgnoreCase(name)) {
@@ -102,6 +102,10 @@ public class Recipe {
         }
     }
 
+    public ArrayList<Food> get_ingredients(){
+        return ingredients;
+    }
+    
     public void remove_food(String name){
         boolean removeFood = false;
         for (Food food : ingredients) {
